@@ -1,0 +1,13 @@
+<!-- MENU -->
+{% if pessoa %}
+    <a href="/home/{{ pessoa.nome }}">_H_o_m_e_</a>
+    <a href="/perfil/{{ pessoa.email }}">_P_e_r_f_i_L_</a>
+    <a href="/novo/contato/">_N_o_v_o__C_o_n_t_a_t_o_</a>
+    <a href="/sair">_S_a_i_r </a>
+{% else %}
+    <a href="/autenticacao">_A_u_t_e_n_t_i_q_u_e_-_s_e_</a>
+{% endif %}
+
+<a href="/sobre.html">_S_o_b_r_e_</a>
+<!-- MENU --> 
+<br/><br/>

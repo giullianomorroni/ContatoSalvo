@@ -1,0 +1,17 @@
+<html>
+	<body>
+
+		{% include 'menu.html' %}
+
+        <h3>Perfil do usuario:</h3>
+        ({{ perfil.sobrenome }}) {{ perfil.nome }} <br/>
+        {{ perfil.site }} <br/>
+        {{ perfil.email}} <br/>
+        {% for telefone in telefones %}
+            {% if telefone.particular == 1 %}
+                ({{ telefone.ddd }}) {{ telefone.numero }} 
+            {% endif %}
+        {% endfor %}
+
+	</body>
+</html>

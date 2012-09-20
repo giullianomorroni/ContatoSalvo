@@ -1,0 +1,47 @@
+<html>  
+	<head>
+		<title>Novo Contato</title>
+        <script type="text/javascript">
+            function esconderContato(campoSel){
+                if(campoSel.value == 0)
+                    campoSel.value = 1;
+                else if(campoSel.value == 1)
+                    campoSel.value = 0;
+
+                var inp = document.getElementById('contato');
+                if (inp.readonly == 'readonly')
+                    inp.readonly = 'false';
+                 else   
+                    inp.readonly = 'readonly';
+            }
+        </script>
+	<head>
+
+	<body>
+
+		{% include 'menu.html' %}
+		
+		<h3>Novo Contato</h3>
+		{% if error_message %}
+			<p><strong>{{ error_message }}</strong></p>
+		{% endif %}
+        {% if message %}
+			<p><strong>{{ message }}</strong></p>
+		{% endif %}
+
+        <form action="/registrar/contato/" method="post">
+			{% csrf_token %}
+            Este telefone pertence a você: <input type="checkbox" value="0" name="particular" onclick="esconderContato(this)"/> <br/>
+            Contato: <input type="text" value="{{ telefone.contato }}" name="contato" id="contato" min="5" max="20" /> <br/>
+
+			DDD: <input type="number" value="{{ telefone.ddd }}" name="ddd" required="required" min="1" max="99" pattern="[0-9][1-9][1-9]"/> <br/>
+			Numero: <input type="text" value="{{ telefone.numero }}" name="numero" required="required" min="1" max="8" pattern="[0-9]+"/> <br/>
+			Operadora: <input type="number" value="{{ telefone.operadora }}" name="operadora" max="99"/> <br/>
+			Pais: <input type="number" value="{{ telefone.pais }}" name="pais" min="0" max="999" pattern="[0-9][1-9][1-9]"/> <br/>
+            Observacoes: <textarea value="{{ telefone.observacao }}" name="observacao" rows="5" cols="40"></textarea > <br/>
+            <br/><br/>
+			<input type="submit" value="Registrar" />
+		</form>
+	</body>
+
+</html>
