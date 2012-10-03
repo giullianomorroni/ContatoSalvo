@@ -10,7 +10,7 @@
 		{% if error_message %}
 			<p><strong>{{ error_message }}</strong></p>
 		{% endif %}
-		<form action="/ContatoSalvo/autenticar/" method="post">
+		<form action="/autenticar/" method="post">
 			{% csrf_token %}
 			<input type="email" name="email" id="email" required="required" placeholder="email"/>
 			<input type="password" name="senha" id="senha" required="required" placeholder="senha"/>

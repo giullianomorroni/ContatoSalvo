@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<title>Atualizar Registro</title>
+	<head>
+
+	<body>
+
+		{% include 'menu.html' %}
+
+		<h4>Contato Salvo, uma iniciativa, muitas necessidades, diversas aplicações</h4>
+		{% if error_message %}
+			<p><strong>{{ error_message }}</strong></p>
+		{% endif %}
+
+		<form action="/atualizar/pessoa/" method="post">
+			{% csrf_token %}
+            
+            Nome <input type="text" value="{{ pessoa.nome }}" name="nome" required="required" min="1" max="50" pattern="[A-z]+"/> <br/>
+			Sobrenome <input type="text" value="{{ pessoa.sobrenome }}" name="sobrenome" required="required" min="1" max="50"/><br/> 
+            e-mail <input type="email" value="{{ pessoa.email }}" name="email" required="required" max="100"/> <br/>
+            senha <input type="password" value="{{ pessoa.senha }}" name="senha" required="required" min="5" max="10"/><br/> 
+            
+            site <input type="text" value="{{ pessoa.site }}" name="site" min="1" max="100"/><br/>
+            perfil <input type="text" value="{{ pessoa.perfil }}" name="perfil" min="1" max="100"/><br/> 
+
+            <br/>
+            informações exibidas
+            <br/>
+            <input type="checkbox" name="exibirEmail" id="exibirEmail" checked="{{ pessoa.exibirEmail }}" /> mostre meu email
+            <input type="checkbox" name="exibirTelefones" id="exibirTelefones" checked="{{ pessoa.exibirTelefones }}" /> meus telefones
+            <input type="checkbox" name="exibirSite" id="exibirSite" checked="{{ pessoa.exibirSite }}" /> site
+
+			<br/><br/>
+			<input type="submit" value="Atualizar" />
+		</form>
+	</body>
+
+</html>

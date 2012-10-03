@@ -5,7 +5,7 @@
 			function direcionar(){
 				var texto = document.getElementById("nome").value;
 				if(texto != '') {
-                    window.location ="perfil/"+texto;
+                    window.location ="/perfil/"+texto;
 				}
 			}
 		</script>
@@ -21,7 +21,7 @@
 		Se você já tem uma conta digite seu nome ao lado 
 		<input type="text" name="nome" id="nome" > <input type="button" value="ir" onclick="direcionar()"/> será preciso  autenticar-se.
 
-        <br/><br/> Caso contrário <a href="nova/pessoa/">registre-se</a>
+        <br/><br/> Caso contrário <a href="/nova/pessoa/">registre-se</a>
 
         {% if error_message %}
 			<p><strong>{{ error_message }}</strong></p>
