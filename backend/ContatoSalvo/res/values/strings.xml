@@ -1,0 +1,31 @@
+<resources>
+
+    <string name="app_name">CONTATO SALVO</string>
+    <string name="titulo">C_o_n_t_a_t_o__S_a_l_v_o</string>
+    <string name="email">e-mail</string>
+    <string name="nome">Nome</string>
+    <string name="telefones">Telefones</string>
+    <string name="emails">e-mails</string>
+    <string name="pin">PIN</string>
+    <string name="registrar">registrar</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">CONTATO SALVO</string>
+    <string name="title_activity_contatos">CONTATO SALVO</string>
+	<string name="sincronizar">Sincronizar meus Contatos</string>
+	<string name="registro_titulo">registre-se, é rápido.</string>
+	<string name="registre_se">primeira vez !</string>
+	<string name="adicionar">+</string>
+	<string name="registro_contato_titulo">Informe o nome e adicione quantos telefones quiser</string>
+
+	<string name="selecione">selecione..</string>
+	
+   	<string-array name="operadoras">
+        <item>Tim</item>
+        <item>Claro</item>
+        <item>Vivo</item>
+        <item>Oi</item>
+        <item>Nextel</item>
+        <item>outros</item>
+    </string-array>
+    	
+</resources>
