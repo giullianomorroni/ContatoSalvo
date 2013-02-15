@@ -1,0 +1,95 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >
+	   <Button
+	       android:id="@+id/button_voltar"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:onClick="paginaFiltro"
+	       android:text="voltar" />
+		   <Button
+	       android:id="@+id/button_fechar"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:onClick="fechar"
+	       android:text="fechar" />
+	</LinearLayout>
+
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >    
+	    <TextView
+	        android:id="@+id/textView_nome"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="30.0sp"
+	        android:textSize="20dp"
+	        android:text="@string/nome" />
+	 </LinearLayout>
+
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >    
+	    <TextView
+	        android:id="@+id/textView_telefones"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10.0sp"
+	        android:textSize="20dp"
+	        android:text="@string/telefones" />
+	 </LinearLayout>
+		
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical" >
+		
+		<!-- <LinearLayout 
+		    android:orientation="vertical"
+		    android:layout_width="fill_parent"
+		    android:layout_height="200dp"> -->
+
+	       	<ListView
+	           android:id="@+id/listView_telefones"
+	           android:scrollbarAlwaysDrawVerticalTrack="true"
+	           android:layout_width="wrap_content"
+	           android:layout_height="fill_parent"/>
+	
+		<!-- </LinearLayout> -->
+	</LinearLayout>
+
+	
+	<LinearLayout
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal" >    
+	    <TextView
+	        android:id="@+id/textView_emails"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="10.0sp"
+	        android:textSize="20dp"
+	        android:text="@string/emails" />
+	 </LinearLayout>	
+
+    <LinearLayout 
+	    android:orientation="vertical"
+	    android:layout_width="wrap_content"
+	    android:layout_height="150dp">
+
+	    <ListView
+	        android:id="@+id/listView_emails"
+	        android:layout_width="match_parent"
+	        android:layout_height="fill_parent" />
+	</LinearLayout>
+
+</LinearLayout>

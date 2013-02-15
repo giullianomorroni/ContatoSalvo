@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
+
+	<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/rowEditTextTelefone"
+	    android:inputType="phone"
+	    android:layout_width="140dp"
+	    android:layout_height="wrap_content" />
+
+	<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/rowTextOperadora"
+	    android:paddingLeft="10dp"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" />
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools"
+	    android:orientation="horizontal"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent" >
+
+	
+		<Button android:id="@+id/buttonRemoveTelefone"
+		    android:onClick="removerTelefone"
+		    android:paddingTop="10dp"
+		    android:paddingLeft="10dp"
+		    android:layout_width="50dp"
+		    android:layout_height="50dp"
+		    android:text="X" />
+
+		<Button android:id="@+id/buttonSaveTelefone"
+		    android:onClick="removerTelefone"
+		    android:paddingTop="10dp"
+		    android:paddingLeft="10dp"
+		    android:layout_width="50dp"
+		    android:layout_height="50dp"
+		    android:text="S" />
+
+		<Button android:id="@+id/buttonCallTelefone"
+		    android:onClick="removerTelefone"
+		    android:paddingTop="10dp"
+		    android:paddingLeft="10dp"
+		    android:layout_width="50dp"
+		    android:layout_height="50dp"
+		    android:text="L" />
+	</LinearLayout>
+
+</LinearLayout>
