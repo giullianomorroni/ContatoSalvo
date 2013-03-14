@@ -27,9 +27,9 @@ public class Telefone {
 		}
 		this.operadora = operadora;
 	}
-	
+
 	public Telefone(String numero) {
-		this.numero = numero;
+		this(numero, null);
 	}
 
 	public String getNumero() {

@@ -7,36 +7,28 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.contatosalvo.contatos.IniciarChamadaListener;
+import com.contatosalvo.contatos.RemoverTelefoneListener;
 import com.contatosalvo.contatos.Telefone;
 
-public class ListaContatoAdapter extends BaseAdapter {
-
+public class ListaTelefoneAdapter extends ArrayAdapter<Telefone> {
+	
 	private List<Telefone> telefones = new ArrayList<Telefone>();
 	private Context context;
 
-	public ListaContatoAdapter(Context context, List<Telefone> telefones) {
+	public ListaTelefoneAdapter(Context context, int resource, List<Telefone> telefones) {
+		super(context, resource, telefones);
 		this.context = context;
-		 //this.inflater = LayoutInflater.from(context);
-		 this.telefones = telefones;
+		this.telefones = telefones;
 	}
 
 	@Override
 	public int getCount() {
 		return telefones.size();
-	}
-
-	@Override
-	public Object getItem(int position) {
-		return telefones.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return position;
 	}
 
 	@Override
@@ -46,11 +38,17 @@ public class ListaContatoAdapter extends BaseAdapter {
              convertView = vi.inflate(R.layout.contatos_linha, null);
          }
 
-         EditText editText = (EditText) convertView.findViewById(R.id.rowEditTextTelefone);
+         TextView editText = (TextView) convertView.findViewById(R.id.rowEditTextTelefone);
          editText.setText(telefones.get(position).toString());
 
          TextView text = (TextView) convertView.findViewById(R.id.rowTextOperadora);
          text.setText(telefones.get(position).getOperadora());
+
+         ImageButton buttonCall = (ImageButton) convertView.findViewById(R.id.buttonCallTelefone);
+         buttonCall.setOnClickListener(new IniciarChamadaListener(position, telefones));
+
+         ImageButton buttonRemove = (ImageButton) convertView.findViewById(R.id.buttonRemoveTelefone);
+         buttonRemove.setOnClickListener(new RemoverTelefoneListener(position, telefones));
 
          return convertView;
 	}

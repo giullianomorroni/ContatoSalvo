@@ -1,7 +1,5 @@
 package com.contatosalvo.contatos;
 
-import com.contatosalvo.MainActivity;
-
 import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
@@ -9,12 +7,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
-public class DetalharContatoListener implements OnItemClickListener {
+import com.contatosalvo.MainActivity;
+
+public class ListaTelefoneListener implements OnItemClickListener {
 
 	private ListView mainListView;
 	private MainActivity mainActivity;
 	
-	public DetalharContatoListener(final ListView mainListView, MainActivity mainActivity) {
+	public ListaTelefoneListener(final ListView mainListView, MainActivity mainActivity) {
+		super();
 		this.mainListView = mainListView;
 		this.mainActivity = mainActivity;
 	}
@@ -27,5 +28,6 @@ public class DetalharContatoListener implements OnItemClickListener {
 		Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + telefone));
 		mainActivity.startActivity(intent);
 	}
+
 
 }

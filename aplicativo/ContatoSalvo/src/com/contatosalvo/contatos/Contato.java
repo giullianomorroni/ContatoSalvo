@@ -1,4 +1,4 @@
- package com.contatosalvo.contatos;
+package com.contatosalvo.contatos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,10 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentResolver;
-import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-
 
 public class Contato {
 
@@ -24,8 +22,9 @@ public class Contato {
 	public Contato() {
 		super();
 	}
-	
-	public Contato(String idConta, String nome, List<Telefone> telefones, String email) {
+
+	public Contato(String idConta, String nome, List<Telefone> telefones,
+			String email) {
 		super();
 		this.idConta = idConta;
 		this.nome = nome;
@@ -39,44 +38,44 @@ public class Contato {
 		this.nome = nome;
 		this.telefones.add(telefone);
 	}
-	
-	public List<Contato> obterContatosTelefone(Context ctx, ContentResolver contentResolver){
+
+	public List<Contato> obterContatosTelefone(String idConta, ContentResolver cr) {
 		List<Contato> contatos = new ArrayList<Contato>();
-		Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
+		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 
-		while (cursor.moveToNext()) { 
-		   String id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-		   String nome = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-		   String possuiTelefones = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
+		if (cur.getCount() > 0) {
+			while (cur.moveToNext()) {
+				Contato contato = new Contato();
+				String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+				String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+				if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+					contato.setNome(name);
+					// get the phone number
+					Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[] { id }, null);
+					while (pCur.moveToNext()) {
+						String phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+						contato.getTelefones().add(new Telefone(phone));
+					}
+					pCur.close();
 
-		   Contato c = new Contato(); 
-		   c.setNome(nome);
-
-		   if (Boolean.parseBoolean(possuiTelefones)) { 
-		      // You know it has a number so now query it like this
-		      Cursor phones = contentResolver.query( ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = "+ id, null, null); 
-		      while (phones.moveToNext()) { 
-		         String numero = phones.getString(phones.getColumnIndex( ContactsContract.CommonDataKinds.Phone.NUMBER));
-		         c.getTelefones().add(new Telefone(numero));
-		      } 
-		      phones.close(); 
-		   }
-
-		   Cursor emails = contentResolver.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + id, null, null); 
-		   while (emails.moveToNext()) { 
-		      String email = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-		      c.setEmail(email);
-		   } 
-		   emails.close();
-		   contatos.add(c);
+					// get email and type
+					Cursor emailCur = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID+ " = ?", new String[] { id }, null);
+					while (emailCur.moveToNext()) {
+						String email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+						contato.setEmail(email);
+					}
+					emailCur.close();
+					contato.setIdConta(idConta);
+					contatos.add(contato);
+				}
+			}
 		}
-		cursor.close();
 		return contatos;
 	}
-	
+
 	public String gerarJson() {
 		JSONObject json = new JSONObject();
-		try{
+		try {
 			json.put("id_usuario", idConta);
 			json.put("nome", nome);
 			json.put("email", email);
@@ -93,7 +92,6 @@ public class Contato {
 		}
 		return json.toString();
 	}
-
 
 	public String getId() {
 		return id;
@@ -133,6 +131,12 @@ public class Contato {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@Override
+	public String toString() {
+		return "Contato [id=" + id + ", idConta=" + idConta + ", nome=" + nome
+				+ ", email=" + email + ", telefones=" + telefones + "]";
 	}
 
 }

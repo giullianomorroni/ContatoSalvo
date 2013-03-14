@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -19,10 +18,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.json.JSONArray;
@@ -31,15 +28,13 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -50,6 +45,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.contatosalvo.contatos.Contato;
+import com.contatosalvo.contatos.ListaTelefoneListener;
 import com.contatosalvo.contatos.ListarContatoListener;
 import com.contatosalvo.contatos.Telefone;
 
@@ -63,7 +59,7 @@ public class MainActivity extends Activity {
 	private String senha = null;
 
 	private static List<Telefone> novosTelefones = new ArrayList<Telefone>();
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,17 +76,29 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
+		MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.activity_main, menu);
+	    return true;
 	}
 
-	public boolean isNetworkAvailable() {
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-		if (networkInfo != null && networkInfo.isConnected()) {
-			return true;
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.menu_sincronizar:
+	            sincronizarContatos(item.getActionView());
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
+
+	public void sincronizarContatos(View view) {
+		Contato contato = new Contato();
+		List<Contato> contatos = contato.obterContatosTelefone(this.id , this.getContentResolver());
+		for (Contato c : contatos) {
+			registrarContato(c);
 		}
-		return false;
 	}
 
 	public void registrarContato(View view) {
@@ -107,17 +115,20 @@ public class MainActivity extends Activity {
 			Telefone telefone = new Telefone(numero, operadora);
 			novosTelefones.add(telefone);
 		}
+		Contato usuario = new Contato(this.id, nome, novosTelefones, "");
+		registrarContato(usuario);
+	}
 
+	private void registrarContato(Contato contato) {
 		try {
-			Contato usuario = new Contato(this.id, nome, novosTelefones, "");
-			HttpClient client = createHttpClient();
+			HttpClient client = new RestFul().createHttpClient();
 			HttpPost post = new HttpPost(URL.REGISTRAR_CONTATO.getValor(PRODUCAO));
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpProtocolParams.setContentCharset(httpParameters, "utf-8");
 			post.setParams(httpParameters);
 
 			List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-			pairs.add(new BasicNameValuePair("json", usuario.gerarJson()));
+			pairs.add(new BasicNameValuePair("json", contato.gerarJson()));
 			post.setEntity(new UrlEncodedFormEntity(pairs));
 			client.execute(post);
 			setContentView(R.layout.activity_filtro);
@@ -152,7 +163,7 @@ public class MainActivity extends Activity {
 		EditText pinInput = (EditText) findViewById(R.id.editText_cadastrar_pin);
 		CheckBox checkBox = (CheckBox) findViewById(R.id.checkBox_cadastrar_sincronizar);
 
-		HttpClient client = createHttpClient();
+		HttpClient client = new RestFul().createHttpClient();
 		HttpPost post = new HttpPost(URL.REGISTRAR_CONTA.getValor(PRODUCAO));
 
 		this.email = emailInput.getText().toString();
@@ -186,7 +197,7 @@ public class MainActivity extends Activity {
 				json += linha;
 
 			System.out.println(json);
-			Boolean possuiErro = analisarResposta(json);
+			Boolean possuiErro = new RestFul().analisarResposta(json, this);
 			if (possuiErro)
 				return;
 
@@ -214,10 +225,10 @@ public class MainActivity extends Activity {
 	}
 
 	public void autenticar(View view) {
-		HttpClient client = createHttpClient();
+		HttpClient client = new RestFul().createHttpClient();
 		HttpPost post = new HttpPost(URL.AUTENTICAR.getValor(PRODUCAO));
 
-		if (!isNetworkAvailable())
+		if (!NetWork.isNetworkAvailable(this))
 			Toast.makeText(MainActivity.this, "Sua net é gato", Toast.LENGTH_LONG).show();
 
 		EditText emailInput = (EditText) findViewById(R.id.editText_email);
@@ -244,7 +255,7 @@ public class MainActivity extends Activity {
 				while ((linha = reader.readLine()) != null)
 					json += linha;
 
-				Boolean possuiErro = analisarResposta(json);
+				Boolean possuiErro = new RestFul().analisarResposta(json, this);
 				if (possuiErro)
 					return;
 
@@ -277,36 +288,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private Boolean analisarResposta(String json) throws JSONException {
-		if (json.contains("erro")) {
-			JSONObject jsonObject = new JSONObject(json);
-			Boolean sucesso = jsonObject.getBoolean("success");
-			if (!sucesso) {
-				String erro = jsonObject.getString("erro");
-				System.err.println(erro);
-				Toast.makeText(MainActivity.this, erro, Toast.LENGTH_LONG).show();
-				return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	private HttpClient createHttpClient() {
-		HttpParams httpParameters = new BasicHttpParams();
-		int timeoutConnection = 5000;
-		int timeoutSocket = 5000;
-
-		HttpProtocolParams.setVersion(httpParameters, HttpVersion.HTTP_1_1);
-		HttpProtocolParams.setContentCharset(httpParameters, "utf-8");
-
-		HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
-
-		HttpClient client = new DefaultHttpClient(httpParameters);
-		return client;
-	}
-
 	public void preencherContatosPorLetra(View view) {
 		Button clickedButton = (Button) view;
 		List<String> nomes = prenhcerListaPorLetra(clickedButton.getText().toString());
@@ -315,40 +296,14 @@ public class MainActivity extends Activity {
 		final ListView mainListView = (ListView) findViewById(R.id.listView_contatos);
 		ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nomes);
 
-		mainListView.setOnItemClickListener(listaContatoListener(mainListView));
+		ListarContatoListener listener = new ListarContatoListener(mainListView, this);
+		mainListView.setOnItemClickListener(listener);
 		mainListView.setAdapter(listAdapter);
 	}
 
-	private OnItemClickListener listaContatoListener(final ListView mainListView) {
-		ListarContatoListener listener = new ListarContatoListener(mainListView, this);
-		return listener;
-//		return new AdapterView.OnItemClickListener() {
-//			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-//				Object item = mainListView.getItemAtPosition(position);
-//				String nome = item.toString();
-//				System.out.println("Contato escolhido:" + nome);
-//				detalheContato(nome);
-//			}
-//		};
-	}
-
-//	private OnItemClickListener detalheContatoListener(final ListView mainListView) {
-//		DetalharContatoListener listener = new DetalharContatoListener(mainListView, this);
-//		return listener;
-//		return new AdapterView.OnItemClickListener() {
-//			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-//				Object item = mainListView.getItemAtPosition(position);
-//				String telefone = item.toString();
-//				System.out.println("Telefone escolhido:" + telefone);
-//				Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + telefone));
-//				startActivity(intent);
-//			}
-//		};
-//	}
-
 	private List<String> prenhcerListaPorLetra(String letra) {
 		List<String> nomes = new ArrayList<String>();
-		HttpClient client = createHttpClient();
+		HttpClient client = new RestFul().createHttpClient();
 		String url = URL.CONTATOS_POR_LETRA.getValor(PRODUCAO);
 		url = url.replace("<id>", this.id);
 		url = url.replace("<letra>", letra);
@@ -391,7 +346,7 @@ public class MainActivity extends Activity {
 	}
 
 	public void detalheContato(String nome) {
-		HttpClient client = createHttpClient();
+		HttpClient client = new RestFul().createHttpClient();
 		String url = URL.CONTATO.getValor(PRODUCAO);
 		url = url.replace("<id>", this.id);
 		url = url.replace("<nome>", nome.replace(" ", "%20"));
@@ -411,7 +366,7 @@ public class MainActivity extends Activity {
 
 				JSONObject jsonObject = new JSONObject(json);
 				List<Telefone> telefones = new ArrayList<Telefone>();
-				List<String> emails = new ArrayList<String>();
+				//List<String> emails = new ArrayList<String>();
 
 				JSONArray resutaldo = jsonObject.getJSONArray("telefones");
 				for (int i = 0; i < resutaldo.length(); i++) {
@@ -426,13 +381,16 @@ public class MainActivity extends Activity {
 				final TextView textViewNome = (TextView) findViewById(R.id.textView_nome);
 				textViewNome.setText(nome);
 
+				ListaTelefoneAdapter adapter = new ListaTelefoneAdapter(this, R.id.listView_telefones, telefones);
+
 				final ListView mainListViewTelefone = (ListView) findViewById(R.id.listView_telefones);
-				ListaContatoAdapter adapter = new ListaContatoAdapter(getApplicationContext(), telefones);
+				ListaTelefoneListener detalharContatoListener = new ListaTelefoneListener(mainListViewTelefone, this);
+				mainListViewTelefone.setOnItemClickListener(detalharContatoListener);
 				mainListViewTelefone.setAdapter(adapter);
 
-				final ListView mainListViewEmails = (ListView) findViewById(R.id.listView_emails);
-				ArrayAdapter<String> listAdapterEmails = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, emails);
-				mainListViewEmails.setAdapter(listAdapterEmails);
+				//final ListView mainListViewEmails = (ListView) findViewById(R.id.listView_emails);
+				//ArrayAdapter<String> listAdapterEmails = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, emails);
+				//mainListViewEmails.setAdapter(listAdapterEmails);
 			}
 		} catch (UnsupportedEncodingException e) {
 			Toast.makeText(MainActivity.this, "Telefone inválido",Toast.LENGTH_LONG).show();
@@ -453,7 +411,7 @@ public class MainActivity extends Activity {
 		emailInput.setText(this.email);
 		pinInput.setText(this.senha);
 	}
-
+	
 	public void paginaFiltro(View view) {
 		setContentView(R.layout.activity_filtro);
 	}

@@ -11,14 +11,20 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">CONTATO SALVO</string>
     <string name="title_activity_contatos">CONTATO SALVO</string>
-	<string name="sincronizar">Sincronizar meus Contatos</string>
 	<string name="registro_titulo">registre-se, é rápido.</string>
 	<string name="registre_se">primeira vez !</string>
 	<string name="adicionar">+</string>
 	<string name="registro_contato_titulo">Informe o nome e adicione quantos telefones quiser</string>
+	<string name="sincronizar">Sincronizar Contatos</string>
+	<string name="chamar">Chamar</string>
+	<string name="apagar">Apagar</string>
+	<string name="voltar">Voltar</string>
+	<string name="fechar">Fechar</string>
+	<string name="compartilhar_contato">Enviar Contato</string>
+	<string name="logout">Logoff</string>
 
 	<string name="selecione">selecione..</string>
-	
+
    	<string-array name="operadoras">
         <item>Tim</item>
         <item>Claro</item>
